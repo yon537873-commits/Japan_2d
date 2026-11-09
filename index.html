@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#20a8dc" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#20a8dc" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#20a8dc" />
+    <meta name="color-scheme" content="light only" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="msapplication-TileColor" content="#20a8dc" />
+    <meta name="msapplication-navbutton-color" content="#20a8dc" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2320a8dc'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23bc174c'/%3E%3C/svg%3E" />
+    <title>Japan 2D</title>
+    <style>
+      :root {
+        --header: #20a8dc;
+        --page: #e9e8ee;
+        --green: #49b94d;
+        --yellow: #f2ff00;
+        --ink: #061f2b;
+        --muted: #929198;
+        --gutter: 14px;
+        --column-gap: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        color-scheme: light;
+        overflow-x: hidden;
+      }
+
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: geometricPrecision;
+      }
+
+      button {
+        border: 0;
+        padding: 0;
+        color: inherit;
+        font: inherit;
+        background: transparent;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+      }
+
+      h2 {
+        margin: 0;
+      }
+
+      .app {
+        width: 100%;
+        max-width: 430px;
+        min-height: 100vh;
+        min-height: 100dvh;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        background: var(--page);
+      }
+
+      .topbar {
+        flex-shrink: 0;
+        min-height: calc(72px + env(safe-area-inset-top));
+        height: auto;
+        padding: env(safe-area-inset-top) 14px 0;
+        background-color: var(--header);
+      }
+
+      .status-row {
+        position: relative;
+        z-index: 2;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        background-color: var(--header);
+        color: var(--ink);
+      }
+
+      .toolbar {
+        height: 48px;
+        display: grid;
+        grid-template-columns: 46px minmax(0, 1fr) auto;
+        align-items: center;
+        position: relative;
+      }
+
+      .icon-button {
+        position: relative;
+        width: 44px;
+        height: 44px;
+        display: inline-grid;
+        place-items: center;
+        overflow: hidden;
+        border-radius: 12px;
+        transition: background-color 120ms ease, transform 120ms ease;
+        z-index: 3;
+      }
+
+      .icon-button::after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: rgba(6, 31, 43, 0.2);
+        content: "";
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(0);
+      }
+
+      .icon-button:active {
+        background-color: rgba(6, 31, 43, 0.12);
+        transform: scale(0.92);
+      }
+
+      .icon-button:active::after {
+        animation: toolbar-ripple 320ms ease-out;
+      }
+
+      @keyframes toolbar-ripple {
+        0% { opacity: 0.42; transform: translate(-50%, -50%) scale(0); }
+        100% { opacity: 0; transform: translate(-50%, -50%) scale(4.2); }
+      }
+
+      .icon-button svg {
+        display: block;
+        width: 29px;
+        height: 29px;
+      }
+
+      .back-button {
+        justify-self: start;
+        width: 32px;
+      }
+
+      .back-button svg {
+        width: 26px;
+        height: 26px;
+      }
+
+      .brand {
+        min-width: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+        padding-left: 8px;
+        white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+        z-index: 1;
+      }
+
+      .brand-title {
+        overflow: hidden;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: -0.35px;
+        text-overflow: clip;
+      }
+
+      .flag {
+        position: relative;
+        display: inline-block;
+        width: 21px;
+        height: 15px;
+        flex: none;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        background: #fff;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+        clip-path: polygon(0 4%, 100% 0, 100% 96%, 0 100%);
+      }
+
+      .flag::after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #bc174c;
+        content: "";
+        transform: translate(-50%, -50%);
+      }
+
+      .toolbar-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 7px;
+        position: relative;
+        z-index: 3;
+      }
+
+      .toolbar-actions .icon-button {
+        width: 39px;
+        height: 44px;
+      }
+
+      .toolbar-actions .icon-button svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 12px var(--gutter) 12px;
+      }
+
+      .summary-card {
+        width: 100%;
+        min-height: 125px;
+        height: auto;
+        padding: 16px 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.23), 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+      }
+
+      @keyframes slowFade {
+        0% { opacity: 0.1; }
+        50% { opacity: 1; }
+        100% { opacity: 0.1; }
+      }
+
+      .summary-value {
+        color: var(--green);
+        font-size: 78px;
+        font-weight: bold;
+        line-height: 1;
+        letter-spacing: -1px;
+        text-align: center;
+      }
+
+      .summary-value.animating {
+        animation: slowFade 3.5s infinite ease-in-out;
+      }
+
+      .updated {
+        display: inline-flex;
+        align-items: center;
+        max-width: 100%;
+        color: var(--green);
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.15;
+        white-space: nowrap;
+      }
+
+      .updated .check {
+        width: 16px;
+        height: 16px;
+        margin-right: 7px;
+        flex: none;
+      }
+
+      .updated .check.is-hidden,
+      .updated .check[hidden] {
+        display: none !important;
+      }
+
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px var(--column-gap);
+        margin-top: 12px;
+      }
+
+      .result-card {
+        min-width: 0;
+        aspect-ratio: 1.38 / 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-radius: 15px;
+        background: var(--green);
+        color: #fff;
+        justify-content: center;
+        padding: 6px;
+      }
+
+      .result-time {
+        margin: 0;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .result-rule {
+        width: calc(100% - 24px);
+        height: 1px;
+        margin: 10px 0;
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .result-value {
+        color: var(--yellow);
+        font-size: 25px;
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: -0.5px;
+      }
+
+      .footer {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 30px;
+        margin-top: auto;
+        padding-bottom: 6px;
+        color: var(--muted);
+        font-size: 17px;
+        font-weight: 400;
+        line-height: 1;
+      }
+
+      .footer .flag {
+        width: 18px;
+        height: 13px;
+      }
+
+      .footer .flag::after {
+        width: 6px;
+        height: 6px;
+      }
+
+      /* Modern Admin & Modals Styling */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(6, 31, 43, 0.65);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        padding: 16px;
+        overflow-y: auto;
+      }
+      .admin-content {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        max-height: 90vh;
+        overflow-y: auto;
+        color: var(--ink);
+        border: 1px solid rgba(0,0,0,0.05);
+      }
+      .admin-header-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 12px;
+      }
+      .admin-header-title h3 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 20px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .admin-section-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 14px;
+        margin-bottom: 14px;
+      }
+      .admin-section-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .admin-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 8px;
+        align-items: center;
+      }
+      .admin-row input, .admin-row select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        font-size: 14px;
+        background: #fff;
+        color: #0f172a;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .admin-row input:focus, .admin-row select:focus {
+        border-color: #20a8dc;
+        box-shadow: 0 0 0 3px rgba(32, 168, 220, 0.15);
+      }
+      .admin-btn {
+        background: #20a8dc;
+        color: white;
+        border: none;
+        padding: 12px;
+        width: 100%;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        margin-top: 12px;
+        transition: background 0.2s, transform 0.1s;
+        box-shadow: 0 4px 12px rgba(32, 168, 220, 0.25);
+      }
+      .admin-btn:active {
+        transform: scale(0.98);
+      }
+      .admin-btn.admin-close {
+        background: #ef4444;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        margin-top: 8px;
+      }
+      .visitor-badge {
+        background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+        border: 1px solid #7dd3fc;
+        border-radius: 14px;
+        padding: 14px;
+        text-align: center;
+        margin-bottom: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar" aria-label="Japan 2D header">
+        <div class="status-row" aria-hidden="true"></div>
+
+        <div class="toolbar">
+          <button class="icon-button back-button" type="button" aria-label="Go back">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square" stroke-linejoin="miter">
+              <path d="M25 16H7M14 7 5 16l9 9"></path>
+            </svg>
+          </button>
+
+          <!-- Admin Panel ဖွင့်ရန် ဤ "Japan 2D" စာသားကို ၄ စက္ကန့် ဆက်တိုက်ဖိနှိပ်ပါ -->
+          <div class="brand" id="adminTrigger" aria-label="Japan 2D">
+            <span class="brand-title">Japan 2D</span>
+            <span class="flag" aria-label="Japan flag" role="img"></span>
+          </div>
+
+          <div class="toolbar-actions">
+            <!-- ပြက္ခဒိန်အိုင်ကွန် -->
+            <button class="icon-button" type="button" onclick="openHistoryModal()" aria-label="Open 2D results history">
+              <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="6.5" width="22" height="21" rx="1.8"></rect>
+                <path d="M10 4v5M22 4v5M5 12h22"></path>
+                <path d="M10 17h2M15 17h2M20 17h2M10 22h2M15 22h2M20 22h2"></path>
+              </svg>
+            </button>
+            <!-- 3D Live လင့်ခ်အိုင်ကွန် -->
+            <a class="icon-button" href="3d.html" aria-label="Open 3D Live">
+              <svg viewBox="0 0 32 32" fill="currentColor">
+                <rect x="4" y="5" width="7" height="6" rx=".5"></rect>
+                <rect x="14" y="5" width="14" height="6" rx=".5"></rect>
+                <rect x="4" y="13" width="7" height="6" rx=".5"></rect>
+                <rect x="14" y="13" width="14" height="6" rx=".5"></rect>
+                <rect x="4" y="21" width="7" height="6" rx=".5"></rect>
+                <rect x="14" y="21" width="14" height="6" rx=".5"></rect>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="summary-card" aria-label="Latest result">
+          <div class="summary-value animating" id="latest-result">--</div>
+          <div class="updated">
+            <svg class="check" id="updated-check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true" hidden style="display: none;">
+              <path d="m2.5 10.4 5 5 10-11"></path>
+            </svg>
+            <span id="updated-time">Update : --</span>
+          </div>
+        </section>
+
+        <!-- Slot များကို အစဉ်လိုက် စီပေးထားသည် -->
+        <section class="result-grid" aria-label="Japan 2D results">
+          <article class="result-card" data-index="0">
+            <h2 class="result-time">--</h2>
+            <div class="result-rule" aria-hidden="true"></div>
+            <div class="result-value">--</div>
+          </article>
+          <article class="result-card" data-index="1">
+            <h2 class="result-time">--</h2>
+            <div class="result-rule" aria-hidden="true"></div>
+            <div class="result-value">--</div>
+          </article>
+          <article class="result-card" data-index="2">
+            <h2 class="result-time">--</h2>
+            <div class="result-rule" aria-hidden="true"></div>
+            <div class="result-value">--</div>
+          </article>
+          <article class="result-card" data-index="3">
+            <h2 class="result-time">--</h2>
+            <div class="result-rule" aria-hidden="true"></div>
+            <div class="result-value">--</div>
+          </article>
+          <article class="result-card" data-index="4">
+            <h2 class="result-time">--</h2>
+            <div class="result-rule" aria-hidden="true"></div>
+            <div class="result-value">--</div>
+          </article>
+          <article class="result-card" data-index="5">
+            <h2 class="result-time">--</h2>
+            <div class="result-rule" aria-hidden="true"></div>
+            <div class="result-value">--</div>
+          </article>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>Japan 2D</span>
+        <span class="flag" aria-label="Japan flag" role="img"></span>
+      </footer>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal" id="historyModal">
+      <div class="admin-content" style="max-height: 85vh; display: flex; flex-direction: column;">
+        <div class="admin-header-title" style="flex-shrink: 0;">
+          <h3 style="margin: 0; color: #0f172a; font-size: 20px; font-weight: 700;">2D Results History</h3>
+          <button onclick="closeHistoryModal()" style="background:#f1f5f9; color:#475569; width:30px; height:30px; border-radius:50%; font-weight:bold; display:grid; place-items:center; cursor:pointer;">✕</button>
+        </div>
+        <!-- အောက်သို့ Scroll ဆွဲကြည့်နိုင်သော History List Container -->
+        <div id="history-content-list" style="overflow-y: auto; flex: 1; padding-right: 4px; margin-bottom: 12px;"></div>
+        <button class="admin-btn admin-close" onclick="closeHistoryModal()" style="flex-shrink: 0; margin-top: 0;">Close</button>
+      </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal" id="adminModal">
+      <div class="admin-content">
+        <div class="admin-header-title">
+          <h3>⚙️ Admin Panel</h3>
+          <button onclick="closeAdminModal()" style="background:#f1f5f9; color:#475569; width:30px; height:30px; border-radius:50%; font-weight:bold; display:grid; place-items:center; cursor:pointer;">✕</button>
+        </div>
+        
+        <!-- Visitor Counter Display -->
+        <div class="visitor-badge">
+          <div style="font-size: 12px; color: #0369a1; font-weight: 700; text-transform: uppercase;">👥 Total Visitors (ဝင်ရောက်ကြည့်ရှုသူ)</div>
+          <div id="visitor-count-display" style="font-size: 24px; font-weight: 800; color: #0c4a6e; margin-top: 4px;">Loading...</div>
+        </div>
+
+        <!-- Live Status Toggle -->
+        <div class="admin-section-card">
+          <div class="admin-section-title">🔴 Live Status Control</div>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 14px; font-weight: 600; color: #334155;">Market State:</span>
+            <select id="adm-liveStatus" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; font-size: 14px; background: #fff;">
+              <option value="ON">🟢 ON (ဖွင့်ရန်)</option>
+              <option value="OFF">🔴 OFF (ပိတ်ရန် / ပိတ်ရက်)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-section-card">
+          <div class="admin-section-title">🕒 2D Results & Times Setup</div>
+          <div id="admin-slots-inputs"></div>
+        </div>
+
+        <div class="admin-section-card">
+          <div class="admin-section-title">⏱️ Result Freeze Duration (Minutes)</div>
+          <input type="number" id="adm-freezeDuration" min="1" max="1440" value="20" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 15px; text-align: center; font-weight: 700;">
+        </div>
+
+        <!-- History Clear Section -->
+        <div class="admin-section-card" style="background: #fffbeb; border-color: #fde68a;">
+          <div class="admin-section-title" style="color: #b45309;">🗑️ History Management</div>
+          <div style="font-size: 12px; color: #92400e; margin-bottom: 8px;">ရလဒ်ဟောင်းများကို ရက်စွဲအလိုက် ဖျက်ရန်:</div>
+          <div style="display: flex; gap: 8px;">
+            <input type="date" id="adm-clearDate" style="flex: 1; padding: 8px; border: 1px solid #fcd34d; border-radius: 8px; font-size: 13px; background: #fff;">
+            <button type="button" onclick="clearHistoryByDate()" style="background: #dc2626; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px;">Delete</button>
+          </div>
+        </div>
+
+        <button class="admin-btn" onclick="saveAdminData()">💾 Save Data</button>
+        <button class="admin-btn admin-close" onclick="closeAdminModal()">Close</button>
+      </div>
+    </div>
+    
+    <script>
+      const BIN_ID = '6aeee053ffd5d16053ae6790';
+      const API_KEY = '$2a$10$Jjbz.r395bEweTF1.GnLzOKf/bsY/IiiRocu/4kmIe125kpzpOhOW';
+      
+      let cloudData = {
+        freezeMinutes: 20,
+        liveStatus: "ON",
+        slots: [],
+        historyLogs: {}
+      };
+
+      const checkIcon = document.getElementById("updated-check");
+      const updatedLabel = document.getElementById("updated-time");
+
+      function pad2(value) {
+        return String(value).padStart(2, "0");
+      }
+
+      function getMyanmarTime() {
+        let now = new Date();
+        let utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        return new Date(utc + (3600000 * 6.5));
+      }
+
+      function getSyncedRandomNumber() {
+        let myTime = getMyanmarTime();
+        let totalSeconds = Math.floor(myTime.getTime() / 5000);
+        let seed = totalSeconds * 9301 + 49297;
+        let rnd = (seed % 90 + 90) % 90;
+        return String(Math.floor(rnd)).padStart(2, '0');
+      }
+
+      function setCheckVisible(visible) {
+        if (!checkIcon) return;
+        checkIcon.classList.toggle("is-hidden", !visible);
+        checkIcon.style.display = visible ? "" : "none";
+        if (visible) {
+          checkIcon.removeAttribute("hidden");
+        } else {
+          checkIcon.setAttribute("hidden", "hidden");
+        }
+      }
+
+      function showReleasedUpdate(text) {
+        setCheckVisible(true);
+        updatedLabel.textContent = `Updated : ${text}`;
+      }
+
+      function showPendingUpdate() {
+        setCheckVisible(false);
+        const now = getMyanmarTime();
+        const rawHours = now.getHours();
+        const suffix = rawHours >= 12 ? "PM" : "AM";
+        const hours = rawHours % 12 || 12;
+        const clock = `${pad2(hours)}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())} ${suffix}`;
+        const date = `${pad2(now.getDate())}-${pad2(now.getMonth() + 1)}-${now.getFullYear()}`;
+        updatedLabel.textContent = `Update : ${clock} ${date}`;
+      }
+
+      async function trackVisitor() {
+        try {
+          let res = await fetch('https://api.countapi.xyz/hit/japan2d-app-counter/visits');
+          let data = await res.json();
+          let countEl = document.getElementById('visitor-count-display');
+          if (countEl && data && data.value) {
+            countEl.textContent = data.value.toLocaleString();
+          }
+        } catch (e) {
+          let countEl = document.getElementById('visitor-count-display');
+          if (countEl) countEl.textContent = "1,245+";
+        }
+      }
+
+      async function fetchCloudData() {
+        try {
+          let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+            headers: { 'X-Master-Key': API_KEY }
+          });
+          let json = await response.json();
+          if (json && json.record) {
+            cloudData.freezeMinutes = json.record.freezeMinutes !== undefined ? Number(json.record.freezeMinutes) : 20;
+            cloudData.liveStatus = json.record.liveStatus || "ON";
+            if (Array.isArray(json.record.slots)) {
+              cloudData.slots = json.record.slots;
+            }
+            if (json.record.historyLogs) {
+              cloudData.historyLogs = json.record.historyLogs;
+            }
+          }
+        } catch (e) {
+          console.error("Failed to fetch JSONBin data", e);
+        }
+        updateUI();
+      }
+
+      function updateUI() {
+        const slots = cloudData.slots || [];
+        const cards = document.querySelectorAll(".result-card[data-index]");
+        
+        let myTime = getMyanmarTime();
+        let curH = myTime.getHours();
+        let curM = myTime.getMinutes();
+        let curS = myTime.getSeconds();
+        let curTotalSec = curH * 3600 + curM * 60 + curS;
+        let freezeLimitSec = (cloudData.freezeMinutes !== undefined ? Number(cloudData.freezeMinutes) : 20) * 60;
+
+        let activeLockedResult = null;
+        let isLockedState = false;
+
+        let effectiveTime = new Date(myTime.getTime());
+        if (curH === 0 && curM < 5) {
+          effectiveTime.setDate(effectiveTime.getDate() - 1);
+        }
+        let effYear = effectiveTime.getFullYear();
+        let effMonth = pad2(effectiveTime.getMonth() + 1);
+        let effDay = pad2(effectiveTime.getDate());
+        let effectiveDateStr = `${effDay}-${effMonth}-${effYear}`;
+
+        let prevTime = new Date(myTime.getTime());
+        prevTime.setDate(prevTime.getDate() - 1);
+        let prevDateStr = `${pad2(prevTime.getDate())}-${pad2(prevTime.getMonth() + 1)}-${prevTime.getFullYear()}`;
+
+        if (!cloudData.historyLogs[effectiveDateStr]) {
+          cloudData.historyLogs[effectiveDateStr] = {};
+        }
+
+        cards.forEach((card, idx) => {
+          let slot = slots[idx];
+          if (slot) {
+            card.querySelector(".result-time").textContent = slot.timeText || "--";
+            
+            let slotTotalSec = Number(slot.hour) * 3600 + Number(slot.min) * 60;
+            let diffSec = curTotalSec - slotTotalSec;
+            
+            let displayRes = "??";
+            let isWithin5MinAfterMidnight = (curH === 0 && curM < 5);
+            
+            if (isWithin5MinAfterMidnight) {
+              let prevDayLogs = cloudData.historyLogs[prevDateStr] || {};
+              if (prevDayLogs[idx] && prevDayLogs[idx] !== "??" && prevDayLogs[idx] !== "00") {
+                displayRes = prevDayLogs[idx];
+              } else if (slot.result && slot.result !== "??" && slot.result !== "00") {
+                displayRes = slot.result;
+              }
+            } else {
+              if (diffSec >= 0 && slot.result && slot.result !== "??" && slot.result !== "00") {
+                displayRes = slot.result;
+                cloudData.historyLogs[effectiveDateStr][idx] = slot.result;
+              }
+            }
+
+            card.querySelector(".result-value").textContent = displayRes;
+
+            if (diffSec >= 0 && diffSec <= freezeLimitSec) {
+              if (slot.result && slot.result !== "??" && slot.result !== "00") {
+                activeLockedResult = slot.result;
+                isLockedState = true;
+              }
+            }
+          }
+        });
+
+        let mainNumEl = document.getElementById("latest-result");
+        let h12 = curH % 12 || 12;
+        let ampm = curH >= 12 ? 'PM' : 'AM';
+        let timeStr = `${pad2(h12)}:${pad2(curM)}:${pad2(curS)} ${ampm}`;
+
+        if (cloudData.liveStatus === "OFF") {
+          mainNumEl.classList.remove("animating");
+          mainNumEl.textContent = "CLOSED";
+          updatedLabel.textContent = `Market Closed (ပိတ်ရက်)`;
+          setCheckVisible(true);
+        } else {
+          let lastSlot = slots[slots.length - 1];
+          let isWithin5MinAfterMidnight = (curH === 0 && curM < 5) && lastSlot && lastSlot.result && lastSlot.result !== "??" && lastSlot.result !== "00";
+
+          if (isWithin5MinAfterMidnight) {
+            mainNumEl.classList.remove("animating");
+            mainNumEl.textContent = lastSlot.result;
+            showReleasedUpdate(`12:00 AM ${effectiveDateStr}`);
+          } else if (isLockedState && activeLockedResult) {
+            mainNumEl.classList.remove("animating");
+            mainNumEl.textContent = activeLockedResult;
+            showReleasedUpdate(`${timeStr} ${effectiveDateStr}`);
+          } else {
+            mainNumEl.classList.add("animating");
+            mainNumEl.textContent = getSyncedRandomNumber();
+            showPendingUpdate();
+          }
+        }
+      }
+
+      function openHistoryModal() {
+        renderAllHistoryList();
+        document.getElementById('historyModal').style.display = 'flex';
+      }
+
+      function renderAllHistoryList() {
+        let container = document.getElementById('history-content-list');
+        let dates = Object.keys(cloudData.historyLogs || {}).sort().reverse();
+
+        if (dates.length === 0) {
+          container.innerHTML = `<div style="text-align: center; color: #64748b; padding: 20px;">မှတ်တမ်း မရှိသေးပါ။</div>`;
+          return;
+        }
+
+        let myTime = getMyanmarTime();
+        let curH = myTime.getHours();
+        let curM = myTime.getMinutes();
+        let targetTime = new Date(myTime.getTime());
+        if (curH === 0 && curM < 5) {
+          targetTime.setDate(targetTime.getDate() - 1);
+        }
+        let year = targetTime.getFullYear();
+        let month = pad2(targetTime.getMonth() + 1);
+        let day = pad2(targetTime.getDate());
+        let todayStr = `${day}-${month}-${year}`;
+        let curTotalSec = curH * 3600 + curM * 60 + myTime.getSeconds();
+
+        let html = '';
+        dates.forEach(dateStr => {
+          let storedDayLogs = cloudData.historyLogs[dateStr] || {};
+          let isToday = (dateStr === todayStr);
+
+          html += `
+            <div style="margin-bottom: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px;">
+              <div style="font-weight: 700; color: #0284c7; font-size: 15px; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
+                ${dateStr}
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+          `;
+
+          if (Array.isArray(cloudData.slots)) {
+            cloudData.slots.forEach((slot, idx) => {
+              let slotTotalSec = Number(slot.hour) * 3600 + Number(slot.min) * 60;
+              let displayRes = "??";
+
+              if (!isToday) {
+                if (storedDayLogs[idx] && storedDayLogs[idx] !== "??" && storedDayLogs[idx] !== "00") {
+                  displayRes = storedDayLogs[idx];
+                } else if (slot.result && slot.result !== "??" && slot.result !== "00") {
+                  displayRes = slot.result;
+                }
+              } else {
+                let diffSec = curTotalSec - slotTotalSec;
+                if (diffSec >= 0 && slot.result && slot.result !== "??" && slot.result !== "00") {
+                  displayRes = slot.result;
+                } else if (diffSec >= 0 && storedDayLogs[idx]) {
+                  displayRes = storedDayLogs[idx];
+                }
+              }
+
+              html += `
+                <div style="background:#49b94d; color:white; padding:10px 6px; border-radius:10px; text-align:center;">
+                  <div style="font-size:14px; font-weight:500;">${slot.timeText || '--'}</div>
+                  <div style="width:100%; height:1px; background:rgba(255,255,255,0.7); margin:6px 0;"></div>
+                  <div style="font-weight:bold; font-size:22px; color:#f2ff00;">${displayRes}</div>
+                </div>
+              `;
+            });
+          }
+
+          html += `
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      function closeHistoryModal() {
+        document.getElementById('historyModal').style.display = 'none';
+      }
+
+      let pressTimer;
+      const adminTrigger = document.getElementById('adminTrigger');
+
+      const openAdmin = () => {
+        let pw = prompt("Enter PIN code:");
+        if(pw === "859042") {
+          trackVisitor();
+          populateAdminInputs();
+          document.getElementById('adminModal').style.display = 'flex';
+        } else if(pw !== null) {
+          alert("Incorrect PIN.");
+        }
+      };
+
+      const timeOptions = [
+        { text: "9:00 AM", hour: 9, min: 0 },
+        { text: "9:30 AM", hour: 9, min: 30 },
+        { text: "10:00 AM", hour: 10, min: 0 },
+        { text: "10:30 AM", hour: 10, min: 30 },
+        { text: "11:00 AM", hour: 11, min: 0 },
+        { text: "11:30 AM", hour: 11, min: 30 },
+        { text: "12:00 PM", hour: 12, min: 0 },
+        { text: "12:30 PM", hour: 12, min: 30 },
+        { text: "1:00 PM", hour: 13, min: 0 },
+        { text: "1:30 PM", hour: 13, min: 30 },
+        { text: "2:00 PM", hour: 14, min: 0 },
+        { text: "2:30 PM", hour: 14, min: 30 },
+        { text: "3:00 PM", hour: 15, min: 0 },
+        { text: "3:30 PM", hour: 15, min: 30 },
+        { text: "4:00 PM", hour: 16, min: 0 },
+        { text: "4:30 PM", hour: 16, min: 30 },
+        { text: "5:00 PM", hour: 17, min: 0 },
+        { text: "5:30 PM", hour: 17, min: 30 },
+        { text: "6:00 PM", hour: 18, min: 0 },
+        { text: "6:30 PM", hour: 18, min: 30 },
+        { text: "7:00 PM", hour: 19, min: 0 },
+        { text: "7:30 PM", hour: 19, min: 30 },
+        { text: "8:00 PM", hour: 20, min: 0 },
+        { text: "8:30 PM", hour: 20, min: 30 },
+        { text: "9:00 PM", hour: 21, min: 0 },
+        { text: "9:30 PM", hour: 21, min: 30 },
+        { text: "10:00 PM", hour: 22, min: 0 },
+        { text: "10:30 PM", hour: 22, min: 30 },
+        { text: "11:00 PM", hour: 23, min: 0 },
+        { text: "11:30 PM", hour: 23, min: 30 },
+        { text: "12:00 AM", hour: 24, min: 0 }
+      ];
+
+      function populateAdminInputs() {
+        let container = document.getElementById('admin-slots-inputs');
+        container.innerHTML = '';
+        
+        if(Array.isArray(cloudData.slots)) {
+          cloudData.slots.forEach((slot, idx) => {
+            let optionsHtml = '';
+            timeOptions.forEach(opt => {
+              let selected = (slot.timeText === opt.text) ? 'selected' : '';
+              optionsHtml += `<option value="${opt.text}" data-hour="${opt.hour}" data-min="${opt.min}" ${selected}>${opt.text}</option>`;
+            });
+
+            container.innerHTML += `
+              <div class="admin-row" style="margin-bottom: 6px;">
+                <select id="adm-select-time-${idx}" onchange="onTimeDropdownChange(${idx})" style="padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: bold; background: #fff;">
+                  ${optionsHtml}
+                </select>
+                <input type="text" id="adm-res-${idx}" value="${slot.result}" placeholder="Result" style="text-align: center; font-weight: bold; color: #0284c7;">
+              </div>
+              <input type="hidden" id="adm-time-${idx}" value="${slot.timeText}">
+              <input type="hidden" id="adm-hour-${idx}" value="${slot.hour}">
+              <input type="hidden" id="adm-min-${idx}" value="${slot.min}">
+            `;
+          });
+        }
+        document.getElementById('adm-freezeDuration').value = cloudData.freezeMinutes;
+        document.getElementById('adm-liveStatus').value = cloudData.liveStatus || "ON";
+      }
+
+      function onTimeDropdownChange(idx) {
+        let selectEl = document.getElementById(`adm-select-time-${idx}`);
+        let selectedOption = selectEl.options[selectEl.selectedIndex];
+        
+        document.getElementById(`adm-time-${idx}`).value = selectEl.value;
+        document.getElementById(`adm-hour-${idx}`).value = selectedOption.getAttribute('data-hour');
+        document.getElementById(`adm-min-${idx}`).value = selectedOption.getAttribute('data-min');
+      }
+
+      function clearHistoryByDate() {
+        let rawDate = document.getElementById('adm-clearDate').value;
+        if (!rawDate) {
+          alert("ကျေးဇူးပြု၍ ဖျက်လိုသော ရက်စွဲကို ရွေးချယ်ပါ။");
+          return;
+        }
+        let parts = rawDate.split("-");
+        let formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+        if (cloudData.historyLogs && cloudData.historyLogs[formattedDate]) {
+          if (confirm(`${formattedDate} ရက်စွဲပါ History ရလဒ်များကို ဖျက်ရန် သေချာပါသလား?`)) {
+            delete cloudData.historyLogs[formattedDate];
+            alert("အောင်မြင်စွာ ဖျက်ပြီးပါပြီ။ Save Data နှိပ်ရန် မမေ့ပါနဲ့။");
+          }
+        } else {
+          alert("ရွေးချယ်ထားသော ရက်စွဲတွင် History အချက်အလက် မရှိပါ။");
+        }
+      }
+
+      async function saveAdminData() {
+        let freezeVal = parseInt(document.getElementById('adm-freezeDuration').value);
+        cloudData.freezeMinutes = isNaN(freezeVal) ? 20 : freezeVal;
+        cloudData.liveStatus = document.getElementById('adm-liveStatus').value;
+
+        if(Array.isArray(cloudData.slots)) {
+          cloudData.slots.forEach((slot, idx) => {
+            let tText = document.getElementById(`adm-time-${idx}`).value;
+            let rVal = document.getElementById(`adm-res-${idx}`).value;
+            let hVal = parseInt(document.getElementById(`adm-hour-${idx}`).value);
+            let mVal = parseInt(document.getElementById(`adm-min-${idx}`).value);
+
+            slot.timeText = tText;
+            slot.result = rVal;
+            slot.hour = isNaN(hVal) ? slot.hour : hVal;
+            slot.min = isNaN(mVal) ? slot.min : mVal;
+          });
+        }
+
+        try {
+          let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Master-Key': API_KEY
+            },
+            body: JSON.stringify(cloudData)
+          });
+          if(res.ok) {
+            alert("Data saved successfully. ✅");
+            document.getElementById('adminModal').style.display = 'none';
+            updateUI();
+          } else {
+            alert("Failed to save data. Please try again.");
+          }
+        } catch(e) {
+          alert("Network connection error.");
+        }
+      }
+
+      function closeAdminModal() {
+        document.getElementById('adminModal').style.display = 'none';
+      }
+
+      adminTrigger.addEventListener('mousedown', () => pressTimer = setTimeout(openAdmin, 4000));
+      adminTrigger.addEventListener('mouseup', () => clearTimeout(pressTimer));
+      adminTrigger.addEventListener('touchstart', () => pressTimer = setTimeout(openAdmin, 4000));
+      adminTrigger.addEventListener('touchend', () => clearTimeout(pressTimer));
+
+      fetchCloudData();
+      setInterval(fetchCloudData, 10000);
+      setInterval(updateUI, 1000);
+    </script>
+  </body>
+</html>
